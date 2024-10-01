@@ -4,7 +4,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Exe</OutputType>
         <Nullable>enable</Nullable>
-        <LangVersion>13</LangVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
