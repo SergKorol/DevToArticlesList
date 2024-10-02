@@ -54,15 +54,15 @@ internal static class Program
                     var link = titleNode?.GetAttributeValue("href", string.Empty);
                     if (!string.IsNullOrEmpty(link))
                     {
-                        link = $"https://dev.to{link}";
+                        link = $"{link}";
                     }
 
                     var timeNode = story.SelectSingleNode(".//time");
                     var datetime = timeNode?.GetAttributeValue("datetime", string.Empty).Replace("T", " ").Replace("Z", string.Empty);
 
                     // Step 6: Extract the 'data-preload-image' attribute
-                    var imageNode = story.SelectSingleNode(".//img[@data-preload-image]");
-                    var preloadImage = imageNode?.GetAttributeValue("data-preload-image", string.Empty);
+                    var imageDiv = story.SelectSingleNode(".//a[@data-preload-image]");
+                    var preloadImage = imageDiv?.GetAttributeValue("data-preload-image", string.Empty);
 
                     articlesTableContent.AppendLine("<tr>");
                     articlesTableContent.AppendLine($"<td width=\"300px\"><a href=\"https://dev.to{link}\"><img src=\"{preloadImage}\" alt=\"thumbnail\"></a></td>");
