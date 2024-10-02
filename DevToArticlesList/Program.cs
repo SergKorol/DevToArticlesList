@@ -39,29 +39,39 @@ internal static class Program
             var document = new HtmlDocument();
             document.LoadHtml(pageContent);
 
-            var articles = document.DocumentNode.SelectNodes("//h2[@class='crayons-story__title']/a");
+            var storyBodies = document.DocumentNode.SelectNodes("//div[contains(@class, 'crayons-story__body')]");
 
-            if (articles != null)
+            if (storyBodies != null)
             {
                 var articlesTableContent = new StringBuilder();
 
                 var count = 0;
-                foreach (var article in articles)
+                foreach (var story in storyBodies)
                 {
                     if (count >= limit) break;
+                    var titleNode = story.SelectSingleNode(".//h2[contains(@class, 'crayons-story__title')]/a");
+                    var title = titleNode?.InnerText.Trim();
+                    var link = titleNode?.GetAttributeValue("href", string.Empty);
+                    if (!string.IsNullOrEmpty(link))
+                    {
+                        link = $"https://dev.to{link}";
+                    }
 
-                    var title = article.InnerText.Trim();
-                    var link = article.GetAttributeValue("href", string.Empty);
-                    var preloadImg = article.GetAttributeValue("data-preload-image", string.Empty) ?? "No image";
+                    var timeNode = story.SelectSingleNode(".//time");
+                    var datetime = timeNode?.GetAttributeValue("datetime", string.Empty).Replace("T", " ").Replace("Z", string.Empty);
+
+                    // Step 6: Extract the 'data-preload-image' attribute
+                    var imageNode = story.SelectSingleNode(".//img[@data-preload-image]");
+                    var preloadImage = imageNode?.GetAttributeValue("data-preload-image", string.Empty);
 
                     articlesTableContent.AppendLine("<tr>");
-                    articlesTableContent.AppendLine($"<td width=\"300px\"><a href=\"https://dev.to{link}\"><img src=\"{preloadImg}\" alt=\"thumbnail\"></a></td>");
-                    articlesTableContent.AppendLine($"<td><a href=\"https://dev.to{link}\">{title}</a></td>");
+                    articlesTableContent.AppendLine($"<td width=\"300px\"><a href=\"https://dev.to{link}\"><img src=\"{preloadImage}\" alt=\"thumbnail\"></a></td>");
+                    articlesTableContent.AppendLine($"<td><a href=\"https://dev.to{link}\">{title}</a><hr><b>{datetime}</b></td>");
                     articlesTableContent.AppendLine("</tr>");
 
                     count++;
                 }
-
+                
                 if (templateFilePath != null)
                 {
                     var templateContent = await File.ReadAllTextAsync(templateFilePath);
