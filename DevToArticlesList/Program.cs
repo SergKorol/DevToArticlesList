@@ -31,7 +31,7 @@ internal static class Program
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36");
         client.DefaultRequestHeaders.Add("api_key", apiKey);
-        var response = await client.GetAsync($"https://dev.to/api/articles/me?page=1&&per_page={limit}");
+        var response = await client.GetAsync($"https://dev.to/api/articles/me/published?page=1&&per_page={limit}");
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
